@@ -1,21 +1,11 @@
 const express = require("express");
-const bancodedados = require("./bancodedados");
+const { rotasConta } = require("./rotas");
+const { validarSenha } = require("./intermediarios");
+
 const app = express();
 
-const validarSenha = (req, res, next) => {
-    const senha = req.query.senha_banco;
-    const senhaBanco = bancodedados.banco.senha;
-
-    if (senha === senhaBanco) {
-        next();
-    } else {
-        return res.status(401).json({ mensagem: `A senha informada é inválida!` });
-    }
-}
-
-app.get('/contas', validarSenha, (req, res) => {
-    const contas = bancodedados.contas;
-    return res.status(200).json(contas);
-});
+app.use(validarSenha);
+app.use(rotasConta);
 
 app.listen(3000);
+
