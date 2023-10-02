@@ -1,10 +1,13 @@
 const express = require("express");
-const { listarContas } = require("./controladores/contas");
+const { listarConta, criarConta, atualizarConta } = require("./controladores/contas");
+const { validarSenha, validarConta, validarCPF, validarEmail, verificarExistenciaConta } = require("./intermediarios");
 
-const rotasConta = express();
+const rotas = express();
 
-rotasConta.get('/contas', listarContas);
+rotas.get('/contas', validarSenha, listarConta);
+rotas.post('/contas', validarConta, validarCPF, validarEmail, verificarExistenciaConta, criarConta);
+rotas.put('/contas/:numeroConta/usuario', validarConta, validarCPF, validarEmail, verificarExistenciaConta, atualizarConta);
 
 module.exports = {
-    rotasConta
+    rotas
 }

@@ -1,11 +1,11 @@
 const express = require("express");
-const { rotasConta } = require("./rotas");
-const { validarSenha } = require("./intermediarios");
+const { rotas } = require("./rotas");
 
 const app = express();
 
-app.use(validarSenha);
-app.use(rotasConta);
+app.use(express.json());
+
+app.use(rotas);
 
 app.listen(3000);
 
