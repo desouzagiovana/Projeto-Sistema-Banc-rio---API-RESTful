@@ -49,8 +49,28 @@ const atualizarConta = (req, res) => {
     return res.status(204).json();
 }
 
+const excluirConta = (req, res) => {
+    const numeroConta = req.params.numeroConta;
+
+    const contaExistente = bancodedados.contas.find(conta => conta.numero === numeroConta);
+
+    if (!contaExistente) {
+        return res.status(404).json({ mensagem: "Conta não encontrada." });
+    }
+
+    if (contaExistente.saldo !== 0) {
+        return res.status(400).json({ mensagem: "A conta só pode ser removida se o saldo for zero!" });
+    }
+
+    bancodedados.contas = bancodedados.contas.filter(conta => conta.numero !== numeroConta);
+
+    return res.status(204).json();
+}
+
+
 module.exports = {
     listarConta,
     criarConta,
-    atualizarConta
+    atualizarConta,
+    excluirConta
 }
