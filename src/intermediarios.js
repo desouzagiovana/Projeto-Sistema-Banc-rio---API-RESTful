@@ -40,6 +40,7 @@ const validarEmail = (req, res, next) => {
 
     next();
 };
+
 const verificarExistenciaConta = (req, res, next) => {
     const { cpf, email } = req.body;
 
@@ -51,10 +52,30 @@ const verificarExistenciaConta = (req, res, next) => {
     }
 }
 
+const validarTransacao = (req, res, next) => {
+    const { numero_conta, valor } = req.body;
+
+    if (!numero_conta || valor <= 0) {
+        return res.status(400).json({ mensagem: "O número da conta e o valor são obrigatórios e devem ser maiores que zero!" });
+    }
+
+    const contaExistente = bancodedados.contas.find(conta => conta.numero === numero_conta);
+
+    if (!contaExistente) {
+        return res.status(404).json({ mensagem: "Conta não encontrada." });
+    }
+
+    req.contaExistente = contaExistente;
+    req.valorTransacao = valor;
+
+    next();
+};
+
 module.exports = {
     validarSenha,
     validarConta,
     validarCPF,
     validarEmail,
-    verificarExistenciaConta
+    verificarExistenciaConta,
+    validarTransacao
 }

@@ -1,36 +1,46 @@
 const bancodedados = require("../bancodedados");
 
-const validarDeposito = (req, res, next) => {
-    const { numeroConta, valorDeposito } = req.body;
+const depositar = (req, res) => {
+    const contaExistente = req.contaExistente;
+    const valorDeposito = parseFloat(req.valorTransacao);
 
-    if (!numeroConta || valorDeposito <= 0) {
-        return res.status(400).json({ mensagem: "Preencha todos os campos!" });
-    } else {
-        const contaExistente = bancodedados.contas.find(conta => conta.numero === numeroConta);
-
-        if (!contaExistente) {
-            return res.status(404).json({ mensagem: "Conta não encontrada." });
-        }
-
-        req.contaExistente = contaExistente;
-
-        next();
+    if (isNaN(valorDeposito) || valorDeposito <= 0) {
+        return res.status(400).json({ mensagem: "O valor do depósito deve ser um número maior que zero!" });
     }
 
-
-};
-
-const depositar = (req, res) => {
-    const { valorDeposito } = parseFloat(req.body);
-    const contaExistente = parseFloat(req.contaExistente);
-
-    contaExistente.saldo += parseFloat(valorDeposito);
+    contaExistente.saldo += valorDeposito;
 
     const transacao = {
         data: new Date().toLocaleString(),
-        numeroConta: contaExistente.numero,
+        numero_conta: contaExistente.numero,
         tipo: "depósito",
-        valor: parseFloat(valorDeposito)
+        valor: valorDeposito
+    };
+
+    bancodedados.depositos.push(transacao);
+
+    return res.status(204).send();
+}
+
+const sacar = (req, res) => {
+    const contaExistente = req.contaExistente;
+    const valorSaque = parseFloat(req.valorTransacao);
+
+    if (isNaN(valorSaque) || valorSaque <= 0) {
+        return res.status(400).json({ mensagem: "O valor do saque deve ser um número maior que zero!" });
+    }
+
+    if (contaExistente.saldo < valorSaque) {
+        return res.status(400).json({ mensagem: "Saldo insuficiente para realizar o saque!" });
+    }
+
+    contaExistente.saldo -= valorSaque;
+
+    const transacao = {
+        data: new Date().toLocaleString(),
+        numero_conta: contaExistente.numero,
+        tipo: "saque",
+        valor: valorSaque
     };
 
     bancodedados.transacoes.push(transacao);
@@ -39,6 +49,6 @@ const depositar = (req, res) => {
 }
 
 module.exports = {
-    validarDeposito,
-    depositar
+    depositar,
+    sacar
 }
