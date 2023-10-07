@@ -25,6 +25,7 @@ const depositar = (req, res) => {
 const sacar = (req, res) => {
     const contaExistente = req.contaExistente;
     const valorSaque = parseFloat(req.valorTransacao);
+    const senha = req.body.senha;
 
     if (isNaN(valorSaque) || valorSaque <= 0) {
         return res.status(400).json({ mensagem: "O valor do saque deve ser um número maior que zero!" });
@@ -32,6 +33,10 @@ const sacar = (req, res) => {
 
     if (contaExistente.saldo < valorSaque) {
         return res.status(400).json({ mensagem: "Saldo insuficiente para realizar o saque!" });
+    }
+
+    if (senha !== contaExistente.senha) {
+        return res.status(401).json({ mensagem: "Senha incorreta!" });
     }
 
     contaExistente.saldo -= valorSaque;
@@ -43,7 +48,7 @@ const sacar = (req, res) => {
         valor: valorSaque
     };
 
-    bancodedados.transacoes.push(transacao);
+    bancodedados.saques.push(transacao);
 
     return res.status(204).send();
 }
