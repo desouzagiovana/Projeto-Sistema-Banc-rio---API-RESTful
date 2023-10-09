@@ -40,7 +40,10 @@ Para usar esta API, siga os seguintes passos:
 - **POST /transacoes/transferir: Realiza uma transferência entre contas.**
 - **GET /contas/saldo: Consulta o saldo de uma conta.**
 - **GET /contas/extrato: Consulta o extrato de uma conta.**
-  
+
+![Imagem 1](fotogit01.jpg)    ![Imagem 2](fotogit02.jpg)
+![Imagem 3](fotogit03.jpg)     ![Imagem 4](fotogit04.jpg)
+
 ## Contribuições🤝🏼
 Contribuições são bem-vindas! Se você deseja contribuir para este projeto:
 
